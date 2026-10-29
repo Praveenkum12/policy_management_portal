@@ -39,8 +39,8 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit,
-                                                List<String> sort) {
-        Sort requested = parseSort(sort);
+                                                   List<String> sort, String direction) {
+        Sort requested = parseSort(sort, direction);
         Specification<Policy> spec = PolicySpecifications.matchesSearch(search)
                 .and(PolicySpecifications.hasStatus(status));
 
@@ -99,10 +99,12 @@ public class PolicyServiceImpl implements PolicyService {
         return repository.findById(id).orElseThrow(() -> new PolicyNotFoundException(id));
     }
 
-    private Sort parseSort(List<String> sort) {
+    private Sort parseSort(List<String> sort, String direction) {
+        Sort.Direction requestedDirection = parseDirection(direction);
         if (sort == null || sort.isEmpty()) {
-            return DEFAULT_SORT;
+            return requestedDirection == null ? DEFAULT_SORT : Sort.by(requestedDirection, "createdAt");
         }
+        Sort.Direction fallback = requestedDirection == null ? Sort.Direction.ASC : requestedDirection;
         List<Sort.Order> orders = new ArrayList<>();
         for (String raw : sort) {
             for (String token : Arrays.stream(raw.split(",")).map(String::trim).filter(t -> !t.isEmpty()).toList()) {
@@ -113,12 +115,20 @@ public class PolicyServiceImpl implements PolicyService {
                     Sort.Order last = orders.removeLast();
                     orders.add(new Sort.Order(Sort.Direction.fromString(token), last.getProperty()));
                 } else if (SORTABLE_FIELDS.contains(token)) {
-                    orders.add(Sort.Order.asc(token));
+                    orders.add(new Sort.Order(fallback, token));
                 } else {
                     throw new InvalidSortException(token, SORTABLE_FIELDS.stream().sorted().toList());
                 }
             }
         }
         return orders.isEmpty() ? DEFAULT_SORT : Sort.by(orders);
+    }
+
+    private Sort.Direction parseDirection(String direction) {
+        if (direction == null || direction.isBlank()) {
+            return null;
+        }
+        return Sort.Direction.fromOptionalString(direction.trim())
+                .orElseThrow(() -> new InvalidSortException("Invalid direction '" + direction + "'. Allowed values: asc, desc."));
     }
 }

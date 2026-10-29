@@ -146,7 +146,7 @@ class PolicyServiceImplTest {
                 .thenReturn(new PageImpl<>(List.of(stored(1L, "POL-1"))));
         ArgumentCaptor<Pageable> pageable = ArgumentCaptor.forClass(Pageable.class);
 
-        var page = service.list(null, null, 0, 10, null);
+        var page = service.list(null, null, 0, 10, null, null);
 
         verify(repository).findAll(any(Specification.class), pageable.capture());
         assertThat(pageable.getValue().getSort().toString()).isEqualTo("createdAt: DESC,id: ASC");
@@ -159,14 +159,34 @@ class PolicyServiceImplTest {
     void listParsesMultipleSortFields() {
         when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(Page.empty());
 
-        var page = service.list(null, null, 0, 10, List.of("status", "desc", "customerName"));
+        var page = service.list(null, null, 0, 10, List.of("status", "desc", "customerName"), null);
 
         assertThat(page.sort()).containsExactly("status,desc", "customerName,asc");
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void listAppliesDirectionParameter() {
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(Page.empty());
+
+        assertThat(service.list(null, null, 0, 10, List.of("customerName"), "desc").sort())
+                .containsExactly("customerName,desc");
+        assertThat(service.list(null, null, 0, 10, null, "asc").sort())
+                .containsExactly("createdAt,asc");
+        assertThat(service.list(null, null, 0, 10, List.of("status,asc", "customerName"), "DESC").sort())
+                .containsExactly("status,asc", "customerName,desc");
+    }
+
+    @Test
+    void listRejectsInvalidDirection() {
+        assertThatThrownBy(() -> service.list(null, null, 0, 10, null, "up"))
+                .isInstanceOf(InvalidSortException.class)
+                .hasMessageContaining("asc, desc");
+    }
+
+    @Test
     void listRejectsUnknownSortField() {
-        assertThatThrownBy(() -> service.list(null, null, 0, 10, List.of("password,desc")))
+        assertThatThrownBy(() -> service.list(null, null, 0, 10, List.of("password,desc"), null))
                 .isInstanceOf(InvalidSortException.class)
                 .hasMessageContaining("password");
     }

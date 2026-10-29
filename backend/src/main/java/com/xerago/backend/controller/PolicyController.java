@@ -39,8 +39,9 @@ public class PolicyController {
             @RequestParam(defaultValue = "10")
             @Min(value = 1, message = "Limit must be at least 1")
             @Max(value = 50, message = "Limit must be at most 50") int limit,
-            @RequestParam(required = false) List<String> sort) {
-        return policyService.list(search, status, page, limit, sort);
+            @RequestParam(required = false) List<String> sort,
+            @RequestParam(required = false) String direction) {
+        return policyService.list(search, status, page, limit, sort, direction);
     }
 
     @GetMapping(path = "/{id}", version = "1.0")

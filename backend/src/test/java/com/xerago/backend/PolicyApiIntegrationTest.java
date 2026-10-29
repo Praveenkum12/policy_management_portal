@@ -100,6 +100,22 @@ class PolicyApiIntegrationTest {
     }
 
     @Test
+    void listSortsWithSeparateDirectionParameter() throws Exception {
+        mvc.perform(get(BASE).param("sort", "premiumAmount").param("direction", "desc"))
+                .andExpect(jsonPath("$.content[0].policyNumber").value("POL-1003"))
+                .andExpect(jsonPath("$.sort[0]").value("premiumAmount,desc"));
+        mvc.perform(get(BASE).param("sort", "premiumAmount").param("direction", "ASC"))
+                .andExpect(jsonPath("$.content[0].policyNumber").value("POL-1005"));
+        mvc.perform(get(BASE).param("sort", "premiumAmount"))
+                .andExpect(jsonPath("$.sort[0]").value("premiumAmount,asc"));
+        mvc.perform(get(BASE).param("direction", "asc"))
+                .andExpect(jsonPath("$.sort[0]").value("createdAt,asc"));
+        mvc.perform(get(BASE).param("sort", "premiumAmount").param("direction", "up"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsString("asc, desc")));
+    }
+
+    @Test
     void listPastLastPageIsEmptyWithRealTotals() throws Exception {
         mvc.perform(get(BASE).param("page", "9"))
                 .andExpect(status().isOk())

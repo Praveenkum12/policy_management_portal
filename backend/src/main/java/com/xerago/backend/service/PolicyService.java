@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface PolicyService {
 
-    PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit, List<String> sort);
+    PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit, List<String> sort,
+                                      String direction);
 
     PolicyResponseDto get(Long id);
 
