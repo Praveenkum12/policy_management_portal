@@ -1,4 +1,4 @@
-INSERT IGNORE INTO policies (policy_number, customer_name, policy_type, premium_amount, status, start_date) VALUES
+INSERT INTO policies (policy_number, customer_name, policy_type, premium_amount, status, start_date) VALUES
     ('POL-1001', 'Asha Raman',       'HEALTH', 12500.00, 'ACTIVE',    '2026-01-15'),
     ('POL-1002', 'Karthik Subbiah',  'MOTOR',   8450.50, 'ACTIVE',    '2026-02-01'),
     ('POL-1003', 'Meera Nair',       'LIFE',   45000.00, 'PENDING',   '2026-11-01'),

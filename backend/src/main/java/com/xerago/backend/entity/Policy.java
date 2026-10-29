@@ -29,7 +29,7 @@ public class Policy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "policy_number", nullable = false, unique = true, length = 50)
+    @Column(name = "policy_number", nullable = false, unique = true, length = 14)
     private String policyNumber;
 
     @Column(name = "customer_name", nullable = false, length = 120)

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS policies (
     id             BIGINT         NOT NULL AUTO_INCREMENT,
-    policy_number  VARCHAR(50)    NOT NULL,
+    policy_number  VARCHAR(14)    NOT NULL,
     customer_name  VARCHAR(120)   NOT NULL,
     policy_type    VARCHAR(20)    NOT NULL,
     premium_amount DECIMAL(12, 2) NOT NULL,
@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS policies (
 
     CONSTRAINT pk_policies PRIMARY KEY (id),
     CONSTRAINT uk_policies_policy_number UNIQUE (policy_number),
+    CONSTRAINT ck_policies_policy_number CHECK (policy_number REGEXP '^POL-[0-9]{1,10}$'),
     CONSTRAINT ck_policies_policy_type CHECK (policy_type IN ('LIFE', 'HEALTH', 'MOTOR', 'TRAVEL')),
     CONSTRAINT ck_policies_status CHECK (status IN ('ACTIVE', 'PENDING', 'CANCELLED')),
     CONSTRAINT ck_policies_premium CHECK (premium_amount > 0),

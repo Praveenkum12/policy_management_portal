@@ -27,6 +27,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PolicyServiceImpl implements PolicyService {
 
     static final Set<String> SORTABLE_FIELDS = Set.of(
@@ -37,7 +38,6 @@ public class PolicyServiceImpl implements PolicyService {
     private final PolicyRepository repository;
 
     @Override
-    @Transactional(readOnly = true)
     public PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit,
                                                 List<String> sort) {
         Sort requested = parseSort(sort);
@@ -59,7 +59,6 @@ public class PolicyServiceImpl implements PolicyService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public PolicyResponseDto get(Long id) {
         return PolicyMapper.toResponse(findOrThrow(id));
     }
@@ -67,8 +66,9 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     @Transactional
     public PolicyResponseDto create(PolicyRequestDto request) {
-        if (repository.existsByPolicyNumberIgnoreCase(request.policyNumber())) {
-            throw new DuplicatePolicyException(request.policyNumber());
+        String policyNumber = PolicyMapper.storedPolicyNumber(request);
+        if (repository.existsByPolicyNumberIgnoreCase(policyNumber)) {
+            throw new DuplicatePolicyException(policyNumber);
         }
         Policy saved = repository.saveAndFlush(PolicyMapper.toEntity(request));
         return PolicyMapper.toResponse(saved);
@@ -78,8 +78,9 @@ public class PolicyServiceImpl implements PolicyService {
     @Transactional
     public PolicyResponseDto update(Long id, PolicyRequestDto request) {
         Policy policy = findOrThrow(id);
-        if (repository.existsByPolicyNumberIgnoreCaseAndIdNot(request.policyNumber(), id)) {
-            throw new DuplicatePolicyException(request.policyNumber());
+        String policyNumber = PolicyMapper.storedPolicyNumber(request);
+        if (repository.existsByPolicyNumberIgnoreCaseAndIdNot(policyNumber, id)) {
+            throw new DuplicatePolicyException(policyNumber);
         }
         PolicyMapper.apply(policy, request);
         return PolicyMapper.toResponse(repository.saveAndFlush(policy));

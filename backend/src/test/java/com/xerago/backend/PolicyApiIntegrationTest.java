@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,7 +62,7 @@ class PolicyApiIntegrationTest {
     }
 
     private static final String VALID_BODY = """
-            {"policyNumber":"pol-2001","customerName":"  New Customer ","policyType":"life",
+            {"policyNumber":"2001","customerName":"  New Customer ","policyType":"life",
              "premiumAmount":1999.5,"status":"pending","startDate":"2026-12-01"}""";
 
     @Test
@@ -185,7 +186,7 @@ class PolicyApiIntegrationTest {
 
     @Test
     void createRejectsDuplicatePolicyNumberCaseInsensitively() throws Exception {
-        String body = VALID_BODY.replace("pol-2001", "pol-1001");
+        String body = VALID_BODY.replace("2001", "1001");
         mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.fieldErrors[0].field").value("policyNumber"));
@@ -224,6 +225,36 @@ class PolicyApiIntegrationTest {
     }
 
     @Test
+    void createReportsInvalidEnumsDateAndPremiumTogether() throws Exception {
+        String body = """
+                {"policyNumber":"9","customerName":"X","policyType":"car",
+                 "premiumAmount":-1,"status":"Expired","startDate":"2026-13-45"}""";
+        mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors", hasSize(4)))
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='policyType')].message",
+                        hasItem(containsString("Allowed values: Life, Health, Motor, Travel"))))
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='status')].message",
+                        hasItem(containsString("Allowed values: Active, Pending, Cancelled"))))
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='startDate')]").exists())
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='premiumAmount')]").exists());
+    }
+
+    @Test
+    void createRejectsNonNumericOrTooLongPolicyNumber() throws Exception {
+        for (String bad : new String[]{"POL-2001", "12ab", "12345678901", "-5", "1 2"}) {
+            mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON)
+                            .content(VALID_BODY.replace("\"2001\"", "\"" + bad + "\"")))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.fieldErrors[0].field").value("policyNumber"));
+        }
+        mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_BODY.replace("2001", "1234567890")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.policyNumber").value("POL-1234567890"));
+    }
+
+    @Test
     void createRejectsMalformedJson() throws Exception {
         mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content("{oops"))
                 .andExpect(status().isBadRequest())
@@ -232,7 +263,7 @@ class PolicyApiIntegrationTest {
 
     @Test
     void updateKeepsIdAndAllowsSamePolicyNumber() throws Exception {
-        String body = VALID_BODY.replace("pol-2001", "POL-1001");
+        String body = VALID_BODY.replace("2001", "1001");
         mvc.perform(put(BASE + "/" + firstId).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(firstId))
@@ -254,7 +285,7 @@ class PolicyApiIntegrationTest {
         mvc.perform(put(BASE + "/999999").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isNotFound());
         mvc.perform(put(BASE + "/" + firstId).contentType(MediaType.APPLICATION_JSON)
-                        .content(VALID_BODY.replace("pol-2001", "POL-1002")))
+                        .content(VALID_BODY.replace("2001", "1002")))
                 .andExpect(status().isConflict());
     }
 

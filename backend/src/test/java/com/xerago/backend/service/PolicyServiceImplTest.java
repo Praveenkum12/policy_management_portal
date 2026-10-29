@@ -43,8 +43,8 @@ class PolicyServiceImplTest {
     private PolicyServiceImpl service;
 
     private PolicyRequestDto request(String number) {
-        return new PolicyRequestDto(number, "Asha Raman", PolicyType.HEALTH, new BigDecimal("1500"),
-                PolicyStatus.ACTIVE, LocalDate.of(2026, 1, 1));
+        return new PolicyRequestDto(number, "Asha Raman", "Health", new BigDecimal("1500"),
+                "Active", "2026-01-01");
     }
 
     private Policy stored(Long id, String number) {
@@ -68,7 +68,7 @@ class PolicyServiceImplTest {
             return p;
         });
 
-        PolicyResponseDto response = service.create(request(" pol-1 "));
+        PolicyResponseDto response = service.create(request(" 1 "));
 
         assertThat(response.id()).isEqualTo(7L);
         assertThat(response.policyNumber()).isEqualTo("POL-1");
@@ -80,7 +80,7 @@ class PolicyServiceImplTest {
     void createRejectsDuplicatePolicyNumber() {
         when(repository.existsByPolicyNumberIgnoreCase("POL-1")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.create(request("POL-1"))).isInstanceOf(DuplicatePolicyException.class);
+        assertThatThrownBy(() -> service.create(request("1"))).isInstanceOf(DuplicatePolicyException.class);
         verify(repository, never()).saveAndFlush(any());
     }
 
@@ -95,7 +95,7 @@ class PolicyServiceImplTest {
     void updateThrowsWhenMissing() {
         when(repository.findById(9L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(9L, request("POL-1"))).isInstanceOf(PolicyNotFoundException.class);
+        assertThatThrownBy(() -> service.update(9L, request("1"))).isInstanceOf(PolicyNotFoundException.class);
     }
 
     @Test
@@ -105,8 +105,8 @@ class PolicyServiceImplTest {
         when(repository.existsByPolicyNumberIgnoreCaseAndIdNot("POL-1", 3L)).thenReturn(false);
         when(repository.saveAndFlush(existing)).thenReturn(existing);
 
-        PolicyResponseDto response = service.update(3L, new PolicyRequestDto("POL-1", "New Name", PolicyType.LIFE,
-                new BigDecimal("99.5"), PolicyStatus.PENDING, LocalDate.of(2027, 2, 2)));
+        PolicyResponseDto response = service.update(3L, new PolicyRequestDto("1", "New Name", "life",
+                new BigDecimal("99.5"), "PENDING", "2027-02-02"));
 
         assertThat(response.id()).isEqualTo(3L);
         assertThat(response.customerName()).isEqualTo("New Name");
@@ -118,7 +118,7 @@ class PolicyServiceImplTest {
         when(repository.findById(3L)).thenReturn(Optional.of(stored(3L, "POL-1")));
         when(repository.existsByPolicyNumberIgnoreCaseAndIdNot("POL-2", 3L)).thenReturn(true);
 
-        assertThatThrownBy(() -> service.update(3L, request("POL-2"))).isInstanceOf(DuplicatePolicyException.class);
+        assertThatThrownBy(() -> service.update(3L, request("2"))).isInstanceOf(DuplicatePolicyException.class);
         verify(repository, never()).saveAndFlush(any());
     }
 
