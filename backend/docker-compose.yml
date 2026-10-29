@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:9.1
     container_name: policy-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
