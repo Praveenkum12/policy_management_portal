@@ -18,6 +18,18 @@ One command starts MySQL, the backend and the frontend. The only prerequisite is
 $env:FRONTEND_PORT="3100"; $env:BACKEND_PORT="8100"; $env:MYSQL_PORT="3307"; docker compose up --build
 ```
 
+**Windows CMD**
+
+```bat
+set FRONTEND_PORT=3100
+set BACKEND_PORT=8100
+set MYSQL_PORT=3307
+docker compose config
+docker compose up --build
+```
+
+`docker compose config` prints the resolved configuration, so you can confirm the ports before starting.
+
 **macOS / Linux / Git Bash**
 
 ```bash
