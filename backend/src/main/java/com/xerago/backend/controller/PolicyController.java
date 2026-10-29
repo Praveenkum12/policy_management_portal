@@ -38,7 +38,7 @@ public class PolicyController {
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be 0 or greater") int page,
             @RequestParam(defaultValue = "10")
             @Min(value = 1, message = "Limit must be at least 1")
-            @Max(value = 100, message = "Limit must be at most 100") int limit,
+            @Max(value = 50, message = "Limit must be at most 50") int limit,
             @RequestParam(required = false) List<String> sort) {
         return policyService.list(search, status, page, limit, sort);
     }

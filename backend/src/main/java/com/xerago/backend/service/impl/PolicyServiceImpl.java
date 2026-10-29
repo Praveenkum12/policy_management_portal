@@ -1,4 +1,4 @@
-package com.xerago.backend.service;
+package com.xerago.backend.service.impl;
 
 import com.xerago.backend.dto.PageResponseDto;
 import com.xerago.backend.dto.PolicyRequestDto;
@@ -10,6 +10,7 @@ import com.xerago.backend.exception.InvalidSortException;
 import com.xerago.backend.exception.PolicyNotFoundException;
 import com.xerago.backend.mapper.PolicyMapper;
 import com.xerago.backend.repository.PolicyRepository;
+import com.xerago.backend.service.PolicyService;
 import com.xerago.backend.specification.PolicySpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
