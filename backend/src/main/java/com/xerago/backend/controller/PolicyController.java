@@ -32,7 +32,7 @@ public class PolicyController {
     private final PolicyService policyService;
 
     @GetMapping(version = "1.0")
-    public PageResponseDto<PolicyResponseDto> list(
+    public ResponseEntity<PageResponseDto<PolicyResponseDto>> list(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) PolicyStatus status,
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be 0 or greater") int page,
@@ -41,12 +41,12 @@ public class PolicyController {
             @Max(value = 50, message = "Limit must be at most 50") int limit,
             @RequestParam(required = false) List<String> sort,
             @RequestParam(required = false) String direction) {
-        return policyService.list(search, status, page, limit, sort, direction);
+        return ResponseEntity.ok(policyService.list(search, status, page, limit, sort, direction));
     }
 
     @GetMapping(path = "/{id}", version = "1.0")
-    public PolicyResponseDto get(@PathVariable Long id) {
-        return policyService.get(id);
+    public ResponseEntity<PolicyResponseDto> get(@PathVariable Long id) {
+        return ResponseEntity.ok(policyService.get(id));
     }
 
     @PostMapping(version = "1.0")
@@ -58,8 +58,8 @@ public class PolicyController {
     }
 
     @PutMapping(path = "/{id}", version = "1.0")
-    public PolicyResponseDto update(@PathVariable Long id, @Valid @RequestBody PolicyRequestDto request) {
-        return policyService.update(id, request);
+    public ResponseEntity<PolicyResponseDto> update(@PathVariable Long id, @Valid @RequestBody PolicyRequestDto request) {
+        return ResponseEntity.ok(policyService.update(id, request));
     }
 
     @DeleteMapping(path = "/{id}", version = "1.0")
