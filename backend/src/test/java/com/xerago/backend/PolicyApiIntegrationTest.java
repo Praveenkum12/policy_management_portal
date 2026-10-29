@@ -338,8 +338,10 @@ class PolicyApiIntegrationTest {
     }
 
     @Test
-    void corsAllowsConfiguredOrigin() throws Exception {
+    void corsAllowsAnyOrigin() throws Exception {
         mvc.perform(get(BASE).header("Origin", "http://localhost:5173"))
-                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
+        mvc.perform(get(BASE).header("Origin", "https://example.com"))
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
     }
 }
