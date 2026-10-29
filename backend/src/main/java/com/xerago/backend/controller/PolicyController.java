@@ -1,0 +1,69 @@
+package com.xerago.backend.controller;
+
+import com.xerago.backend.dto.PageResponse;
+import com.xerago.backend.dto.PolicyRequest;
+import com.xerago.backend.dto.PolicyResponse;
+import com.xerago.backend.entity.PolicyStatus;
+import com.xerago.backend.service.PolicyService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/policies")
+@RequiredArgsConstructor
+public class PolicyController {
+
+    private final PolicyService policyService;
+
+    @GetMapping(version = "1.0")
+    public PageResponse<PolicyResponse> list(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) PolicyStatus status,
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be 0 or greater") int page,
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "Limit must be at least 1")
+            @Max(value = 100, message = "Limit must be at most 100") int limit,
+            @RequestParam(required = false) List<String> sort) {
+        return policyService.list(search, status, page, limit, sort);
+    }
+
+    @GetMapping(path = "/{id}", version = "1.0")
+    public PolicyResponse get(@PathVariable Long id) {
+        return policyService.get(id);
+    }
+
+    @PostMapping(version = "1.0")
+    public ResponseEntity<PolicyResponse> create(@Valid @RequestBody PolicyRequest request) {
+        PolicyResponse created = policyService.create(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(created.id()).toUri();
+        return ResponseEntity.created(location).body(created);
+    }
+
+    @PutMapping(path = "/{id}", version = "1.0")
+    public PolicyResponse update(@PathVariable Long id, @Valid @RequestBody PolicyRequest request) {
+        return policyService.update(id, request);
+    }
+
+    @DeleteMapping(path = "/{id}", version = "1.0")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        policyService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
