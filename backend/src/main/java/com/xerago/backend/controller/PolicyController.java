@@ -1,8 +1,8 @@
 package com.xerago.backend.controller;
 
-import com.xerago.backend.dto.PageResponse;
-import com.xerago.backend.dto.PolicyRequest;
-import com.xerago.backend.dto.PolicyResponse;
+import com.xerago.backend.dto.PageResponseDto;
+import com.xerago.backend.dto.PolicyRequestDto;
+import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.PolicyStatus;
 import com.xerago.backend.service.PolicyService;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ public class PolicyController {
     private final PolicyService policyService;
 
     @GetMapping(version = "1.0")
-    public PageResponse<PolicyResponse> list(
+    public PageResponseDto<PolicyResponseDto> list(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) PolicyStatus status,
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be 0 or greater") int page,
@@ -44,20 +44,20 @@ public class PolicyController {
     }
 
     @GetMapping(path = "/{id}", version = "1.0")
-    public PolicyResponse get(@PathVariable Long id) {
+    public PolicyResponseDto get(@PathVariable Long id) {
         return policyService.get(id);
     }
 
     @PostMapping(version = "1.0")
-    public ResponseEntity<PolicyResponse> create(@Valid @RequestBody PolicyRequest request) {
-        PolicyResponse created = policyService.create(request);
+    public ResponseEntity<PolicyResponseDto> create(@Valid @RequestBody PolicyRequestDto request) {
+        PolicyResponseDto created = policyService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(created.id()).toUri();
         return ResponseEntity.created(location).body(created);
     }
 
     @PutMapping(path = "/{id}", version = "1.0")
-    public PolicyResponse update(@PathVariable Long id, @Valid @RequestBody PolicyRequest request) {
+    public PolicyResponseDto update(@PathVariable Long id, @Valid @RequestBody PolicyRequestDto request) {
         return policyService.update(id, request);
     }
 

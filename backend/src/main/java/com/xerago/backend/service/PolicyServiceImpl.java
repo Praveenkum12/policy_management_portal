@@ -1,8 +1,8 @@
 package com.xerago.backend.service;
 
-import com.xerago.backend.dto.PageResponse;
-import com.xerago.backend.dto.PolicyRequest;
-import com.xerago.backend.dto.PolicyResponse;
+import com.xerago.backend.dto.PageResponseDto;
+import com.xerago.backend.dto.PolicyRequestDto;
+import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.Policy;
 import com.xerago.backend.entity.PolicyStatus;
 import com.xerago.backend.exception.DuplicatePolicyException;
@@ -37,8 +37,8 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<PolicyResponse> list(String search, PolicyStatus status, int page, int limit,
-                                             List<String> sort) {
+    public PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit,
+                                                List<String> sort) {
         Sort requested = parseSort(sort);
         Specification<Policy> spec = PolicySpecifications.matchesSearch(search)
                 .and(PolicySpecifications.hasStatus(status));
@@ -46,7 +46,7 @@ public class PolicyServiceImpl implements PolicyService {
         Page<Policy> result = repository.findAll(spec,
                 PageRequest.of(page, limit, requested.and(Sort.by(Sort.Direction.ASC, "id"))));
 
-        return new PageResponse<>(
+        return new PageResponseDto<>(
                 result.getContent().stream().map(PolicyMapper::toResponse).toList(),
                 result.getNumber(),
                 result.getSize(),
@@ -59,13 +59,13 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public PolicyResponse get(Long id) {
+    public PolicyResponseDto get(Long id) {
         return PolicyMapper.toResponse(findOrThrow(id));
     }
 
     @Override
     @Transactional
-    public PolicyResponse create(PolicyRequest request) {
+    public PolicyResponseDto create(PolicyRequestDto request) {
         if (repository.existsByPolicyNumberIgnoreCase(request.policyNumber())) {
             throw new DuplicatePolicyException(request.policyNumber());
         }
@@ -75,7 +75,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional
-    public PolicyResponse update(Long id, PolicyRequest request) {
+    public PolicyResponseDto update(Long id, PolicyRequestDto request) {
         Policy policy = findOrThrow(id);
         if (repository.existsByPolicyNumberIgnoreCaseAndIdNot(request.policyNumber(), id)) {
             throw new DuplicatePolicyException(request.policyNumber());

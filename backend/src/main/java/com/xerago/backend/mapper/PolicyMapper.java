@@ -1,7 +1,7 @@
 package com.xerago.backend.mapper;
 
-import com.xerago.backend.dto.PolicyRequest;
-import com.xerago.backend.dto.PolicyResponse;
+import com.xerago.backend.dto.PolicyRequestDto;
+import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.Policy;
 
 public final class PolicyMapper {
@@ -9,13 +9,13 @@ public final class PolicyMapper {
     private PolicyMapper() {
     }
 
-    public static Policy toEntity(PolicyRequest request) {
+    public static Policy toEntity(PolicyRequestDto request) {
         Policy policy = new Policy();
         apply(policy, request);
         return policy;
     }
 
-    public static void apply(Policy policy, PolicyRequest request) {
+    public static void apply(Policy policy, PolicyRequestDto request) {
         policy.setPolicyNumber(request.policyNumber());
         policy.setCustomerName(request.customerName());
         policy.setPolicyType(request.policyType());
@@ -24,8 +24,8 @@ public final class PolicyMapper {
         policy.setStartDate(request.startDate());
     }
 
-    public static PolicyResponse toResponse(Policy policy) {
-        return new PolicyResponse(
+    public static PolicyResponseDto toResponse(Policy policy) {
+        return new PolicyResponseDto(
                 policy.getId(),
                 policy.getPolicyNumber(),
                 policy.getCustomerName(),

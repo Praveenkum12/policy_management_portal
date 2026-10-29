@@ -1,7 +1,7 @@
 package com.xerago.backend.service;
 
-import com.xerago.backend.dto.PolicyRequest;
-import com.xerago.backend.dto.PolicyResponse;
+import com.xerago.backend.dto.PolicyRequestDto;
+import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.Policy;
 import com.xerago.backend.entity.PolicyStatus;
 import com.xerago.backend.entity.PolicyType;
@@ -41,8 +41,8 @@ class PolicyServiceImplTest {
     @InjectMocks
     private PolicyServiceImpl service;
 
-    private PolicyRequest request(String number) {
-        return new PolicyRequest(number, "Asha Raman", PolicyType.HEALTH, new BigDecimal("1500"),
+    private PolicyRequestDto request(String number) {
+        return new PolicyRequestDto(number, "Asha Raman", PolicyType.HEALTH, new BigDecimal("1500"),
                 PolicyStatus.ACTIVE, LocalDate.of(2026, 1, 1));
     }
 
@@ -67,7 +67,7 @@ class PolicyServiceImplTest {
             return p;
         });
 
-        PolicyResponse response = service.create(request(" pol-1 "));
+        PolicyResponseDto response = service.create(request(" pol-1 "));
 
         assertThat(response.id()).isEqualTo(7L);
         assertThat(response.policyNumber()).isEqualTo("POL-1");
@@ -104,7 +104,7 @@ class PolicyServiceImplTest {
         when(repository.existsByPolicyNumberIgnoreCaseAndIdNot("POL-1", 3L)).thenReturn(false);
         when(repository.saveAndFlush(existing)).thenReturn(existing);
 
-        PolicyResponse response = service.update(3L, new PolicyRequest("POL-1", "New Name", PolicyType.LIFE,
+        PolicyResponseDto response = service.update(3L, new PolicyRequestDto("POL-1", "New Name", PolicyType.LIFE,
                 new BigDecimal("99.5"), PolicyStatus.PENDING, LocalDate.of(2027, 2, 2)));
 
         assertThat(response.id()).isEqualTo(3L);

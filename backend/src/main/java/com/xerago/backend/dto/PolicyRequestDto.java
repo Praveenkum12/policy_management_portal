@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record PolicyRequest(
+public record PolicyRequestDto(
 
         @NotBlank(message = "Policy number is required")
         @Size(max = 50, message = "Policy number must be at most 50 characters")
@@ -37,7 +37,7 @@ public record PolicyRequest(
         @NotNull(message = "Start date is required")
         LocalDate startDate) {
 
-    public PolicyRequest {
+    public PolicyRequestDto {
         policyNumber = policyNumber == null ? null : policyNumber.trim().toUpperCase();
         customerName = customerName == null ? null : customerName.trim();
     }

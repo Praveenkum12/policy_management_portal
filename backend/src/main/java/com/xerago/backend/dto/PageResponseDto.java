@@ -2,7 +2,7 @@ package com.xerago.backend.dto;
 
 import java.util.List;
 
-public record PageResponse<T>(
+public record PageResponseDto<T>(
         List<T> content,
         int page,
         int limit,

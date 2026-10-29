@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record PolicyResponse(
+public record PolicyResponseDto(
         Long id,
         String policyNumber,
         String customerName,
