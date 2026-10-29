@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { ChevronDownIcon } from './Icons';
 
 export function Field({ label, required, error, hint, className = '', children }) {
   const id = useId();
@@ -39,9 +40,9 @@ export function TextInput({ prefix, icon, trailing, ...props }) {
   );
 }
 
-export function SelectInput({ options, placeholder, ...props }) {
+export function SelectInput({ options, placeholder, icon, ...props }) {
   return (
-    <Control invalid={props['aria-invalid']}>
+    <Control invalid={props['aria-invalid']} icon={icon} trailing={<ChevronDownIcon size={18} className="select-chevron" />}>
       <select {...props}>
         {placeholder !== undefined && <option value="">{placeholder}</option>}
         {options.map((option) => (

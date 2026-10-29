@@ -33,10 +33,11 @@ async function request(url, options = {}) {
   return body;
 }
 
-export function listPolicies({ search, status, page, limit, sort, direction }, signal) {
+export function listPolicies({ search, status, policyType, page, limit, sort, direction }, signal) {
   const params = new URLSearchParams();
   if (search) params.set('search', search);
   if (status) params.set('status', status);
+  if (policyType) params.set('policyType', policyType);
   params.set('page', page);
   params.set('limit', limit);
   if (sort) params.set('sort', sort);

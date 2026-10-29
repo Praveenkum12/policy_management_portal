@@ -13,7 +13,7 @@ export default function Pagination({ page, totalPages, totalElements, count, lim
   return (
     <nav className="pagination" aria-label="Pagination">
       <span>
-        Showing <strong>{from}</strong>–<strong>{to}</strong> of <strong>{totalElements}</strong>
+        Showing <strong>{from}</strong>–<strong>{to}</strong> of <strong>{totalElements}</strong> {totalElements === 1 ? 'policy' : 'policies'}
       </span>
 
       <label className="pagination-size">

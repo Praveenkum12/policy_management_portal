@@ -5,6 +5,7 @@ import com.xerago.backend.dto.PolicyRequestDto;
 import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.Policy;
 import com.xerago.backend.entity.PolicyStatus;
+import com.xerago.backend.entity.PolicyType;
 import com.xerago.backend.exception.DuplicatePolicyException;
 import com.xerago.backend.exception.InvalidSortException;
 import com.xerago.backend.exception.PolicyNotFoundException;
@@ -38,11 +39,12 @@ public class PolicyServiceImpl implements PolicyService {
     private final PolicyRepository repository;
 
     @Override
-    public PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, int page, int limit,
+    public PageResponseDto<PolicyResponseDto> list(String search, PolicyStatus status, PolicyType policyType, int page, int limit,
                                                    List<String> sort, String direction) {
         Sort requested = parseSort(sort, direction);
         Specification<Policy> spec = PolicySpecifications.matchesSearch(search)
-                .and(PolicySpecifications.hasStatus(status));
+                .and(PolicySpecifications.hasStatus(status))
+                .and(PolicySpecifications.hasType(policyType));
 
         Page<Policy> result = repository.findAll(spec,
                 PageRequest.of(page, limit, requested.and(Sort.by(Sort.Direction.ASC, "id"))));

@@ -1,7 +1,28 @@
 import { POLICY_COLUMNS } from '../../constants/policy';
 import { formatCurrency, formatDate, initials } from '../../utils/format';
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, Button, EditIcon, SkeletonRows, TrashIcon, IconButton } from '../common';
+import {
+  ArrowDownIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  Button,
+  CalendarIcon,
+  CarSolidIcon,
+  EditIcon,
+  HeartSolidIcon,
+  IconButton,
+  PlaneSolidIcon,
+  ShieldSolidIcon,
+  SkeletonRows,
+  TrashIcon,
+} from '../common';
 import StatusBadge from './StatusBadge';
+
+const TYPE_ICONS = {
+  Life: ShieldSolidIcon,
+  Health: HeartSolidIcon,
+  Motor: CarSolidIcon,
+  Travel: PlaneSolidIcon,
+};
 
 function SortHeader({ column, sort, direction, onSort }) {
   const sorted = sort === column.key;
@@ -17,9 +38,10 @@ function SortHeader({ column, sort, direction, onSort }) {
 }
 
 function TypeTag({ type }) {
+  const Icon = TYPE_ICONS[type];
   return (
     <span className="type-tag">
-      <span className={`type-dot type-${type.toLowerCase()}`} />
+      {Icon && <Icon size={20} className={`type-icon type-${type.toLowerCase()}`} />}
       {type}
     </span>
   );
@@ -74,16 +96,19 @@ export default function PolicyTable({ policies, loading, refreshing, sort, direc
                   <StatusBadge status={policy.status} />
                 </td>
                 <td className="cell-date" data-label="Start date">
-                  {formatDate(policy.startDate)}
+                  <span className="date-tag">
+                    <CalendarIcon size={18} />
+                    {formatDate(policy.startDate)}
+                  </span>
                 </td>
                 <td className="align-right cell-actions" data-label="Actions">
                   <div className="row-actions">
                     <span className="icon-actions">
-                      <IconButton label={`Edit ${policy.policyNumber}`} onClick={() => onEdit(policy)}>
-                        <EditIcon size={17} />
+                      <IconButton filled label={`Edit ${policy.policyNumber}`} onClick={() => onEdit(policy)}>
+                        <EditIcon size={18} />
                       </IconButton>
-                      <IconButton tone="danger" label={`Delete ${policy.policyNumber}`} onClick={() => onDelete(policy)}>
-                        <TrashIcon size={17} />
+                      <IconButton filled tone="danger" label={`Delete ${policy.policyNumber}`} onClick={() => onDelete(policy)}>
+                        <TrashIcon size={18} />
                       </IconButton>
                     </span>
                     <span className="button-actions">

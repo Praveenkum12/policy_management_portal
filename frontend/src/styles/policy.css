@@ -1,16 +1,9 @@
 .filters {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 13rem auto;
+  grid-template-columns: minmax(0, 1fr) 14rem 14rem auto;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.filters-count {
-  grid-column: 1 / -1;
-  font-size: 0.8125rem;
-  color: var(--color-text-subtle);
 }
 
 .table-wrap {
@@ -30,7 +23,7 @@
 
 .table th,
 .table td {
-  padding: 0.85rem var(--space-4);
+  padding: 1rem var(--space-5);
   text-align: left;
   vertical-align: middle;
   white-space: nowrap;
@@ -95,9 +88,8 @@
 }
 
 .cell-policy-number {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .cell-customer {
@@ -111,12 +103,12 @@
   display: grid;
   place-items: center;
   flex: none;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  font-size: 0.75rem;
+  background: var(--color-avatar);
+  color: var(--color-on-primary);
+  font-size: 0.8125rem;
   font-weight: 700;
 }
 
@@ -127,27 +119,24 @@
   color: var(--color-text);
 }
 
-.type-dot {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 3px;
-  background: var(--color-text-subtle);
+.type-icon {
+  flex: none;
 }
 
-.type-life {
-  background: var(--color-type-life);
+.type-icon.type-life {
+  color: var(--color-type-life);
 }
 
-.type-health {
-  background: var(--color-type-health);
+.type-icon.type-health {
+  color: var(--color-type-health);
 }
 
-.type-motor {
-  background: var(--color-type-motor);
+.type-icon.type-motor {
+  color: var(--color-type-motor);
 }
 
-.type-travel {
-  background: var(--color-type-travel);
+.type-icon.type-travel {
+  color: var(--color-type-travel);
 }
 
 .cell-money {
@@ -159,13 +148,23 @@
   color: var(--color-text-muted);
 }
 
+.date-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.date-tag svg {
+  color: var(--color-text-subtle);
+}
+
 .row-actions {
   display: inline-flex;
 }
 
 .icon-actions {
   display: inline-flex;
-  gap: 0.15rem;
+  gap: var(--space-2);
 }
 
 .button-actions {
@@ -196,7 +195,8 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .filters .search-field {
+  .filters .filters-search,
+  .filters > .btn {
     grid-column: 1 / -1;
   }
 

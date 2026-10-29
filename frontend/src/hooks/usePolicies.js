@@ -4,6 +4,7 @@ import { listPolicies } from '../api/policyApi';
 const INITIAL_QUERY = {
   search: '',
   status: '',
+  policyType: '',
   page: 0,
   limit: 10,
   sort: 'createdAt',
@@ -51,6 +52,7 @@ export function usePolicies() {
   }, [query, reloadToken]);
 
   const setStatus = useCallback((status) => setQuery((q) => ({ ...q, status, page: 0 })), []);
+  const setPolicyType = useCallback((policyType) => setQuery((q) => ({ ...q, policyType, page: 0 })), []);
   const setPage = useCallback((page) => setQuery((q) => ({ ...q, page })), []);
   const setLimit = useCallback((limit) => setQuery((q) => ({ ...q, limit, page: 0 })), []);
 
@@ -67,7 +69,7 @@ export function usePolicies() {
 
   const clearFilters = useCallback(() => {
     setSearchInput('');
-    setQuery((q) => ({ ...q, search: '', status: '', page: 0 }));
+    setQuery((q) => ({ ...q, search: '', status: '', policyType: '', page: 0 }));
   }, []);
 
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
@@ -80,6 +82,7 @@ export function usePolicies() {
     searchInput,
     setSearchInput,
     setStatus,
+    setPolicyType,
     setPage,
     setLimit,
     toggleSort,

@@ -17,9 +17,9 @@ export function Button({
   );
 }
 
-export function IconButton({ tone = 'primary', label, children, ...props }) {
+export function IconButton({ tone = 'primary', filled = false, label, children, ...props }) {
   return (
-    <button type="button" className={`icon-btn icon-btn-${tone}`} aria-label={label} title={label} {...props}>
+    <button type="button" className={`icon-btn icon-btn-${tone} ${filled ? 'icon-btn-filled' : ''}`} aria-label={label} title={label} {...props}>
       {children}
     </button>
   );

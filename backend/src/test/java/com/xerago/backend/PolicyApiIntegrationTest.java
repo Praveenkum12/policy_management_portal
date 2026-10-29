@@ -154,6 +154,20 @@ class PolicyApiIntegrationTest {
     }
 
     @Test
+    void listFiltersByPolicyTypeAndCombinesWithOtherFilters() throws Exception {
+        mvc.perform(get(BASE).param("policyType", "travel"))
+                .andExpect(jsonPath("$.totalElements").value(2));
+        mvc.perform(get(BASE).param("policyType", "Health"))
+                .andExpect(jsonPath("$.content[0].policyNumber").value("POL-1001"))
+                .andExpect(jsonPath("$.totalElements").value(1));
+        mvc.perform(get(BASE).param("policyType", "travel").param("status", "active"))
+                .andExpect(jsonPath("$.totalElements").value(1));
+        mvc.perform(get(BASE).param("policyType", "boat"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].message", containsString("Life, Health, Motor, Travel")));
+    }
+
+    @Test
     void listRejectsInvalidParameters() throws Exception {
         mvc.perform(get(BASE).param("limit", "101"))
                 .andExpect(status().isBadRequest())

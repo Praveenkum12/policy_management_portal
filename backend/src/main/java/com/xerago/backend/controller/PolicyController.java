@@ -4,6 +4,7 @@ import com.xerago.backend.dto.PageResponseDto;
 import com.xerago.backend.dto.PolicyRequestDto;
 import com.xerago.backend.dto.PolicyResponseDto;
 import com.xerago.backend.entity.PolicyStatus;
+import com.xerago.backend.entity.PolicyType;
 import com.xerago.backend.service.PolicyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -35,13 +36,14 @@ public class PolicyController {
     public ResponseEntity<PageResponseDto<PolicyResponseDto>> list(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) PolicyStatus status,
+            @RequestParam(required = false) PolicyType policyType,
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be 0 or greater") int page,
             @RequestParam(defaultValue = "10")
             @Min(value = 1, message = "Limit must be at least 1")
             @Max(value = 50, message = "Limit must be at most 50") int limit,
             @RequestParam(required = false) List<String> sort,
             @RequestParam(required = false) String direction) {
-        return ResponseEntity.ok(policyService.list(search, status, page, limit, sort, direction));
+        return ResponseEntity.ok(policyService.list(search, status, policyType, page, limit, sort, direction));
     }
 
     @GetMapping(path = "/{id}", version = "1.0")
